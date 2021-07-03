@@ -1,0 +1,78 @@
+IN R STUDIO:
+
+source('~/Final Year Project/proctor/PrOCTOR/R/PrOCTOR.R')
+f = read.csv("input.csv") // if you get any error add "", before Mol. Weight in this csv file.
+x = f[15:41]
+colnames(x)
+pca = prcomp(x)
+View(pca)
+pp = data.frame(pca$x)
+m = cbind(f[0:10],f[42:44])
+m = cbind(m,f[46:46])
+m = cbind(m,pp[1:3])
+m = cbind(m,f[47:47])
+write.csv(m,file = "full_tree.csv")
+
+
+
+Now take only 50% passed and 50% failed records in full_tree.csv
+
+
+
+r = read.csv("full_tree.csv")
+mrow = data.frame(make.names(r[2]$X,unique = TRUE))
+m=r[3:19]
+row.names(m) <-(t(mrow))
+X = m[1:16]
+
+(rf2 <- randomForest(x = X, y= factor(t(m[17])),type = "classification"))
+
+
+SMILE   = "[H][C@@]12C[C@@H](C)[C@](O)(C(=O)CO)[C@@]1(C)C[C@H](O)[C@@]1(F)[C@@]2([H])CCC2=CC(=O)C=C[C@]12C"
+targets = c("NR3C1","NR0B1","ANXA1","NOS2")
+source('~/Final Year Project/proctor/PrOCTOR/R/PrOCTOR.R')
+featureset=getAllFeatures(SMILE,targets)
+prob = 1 - predict(rf2,featureset[!names(featureset) %in% c("Ro5","Ghose","Veber")],"prob")[1]
+list(pred=c("Safe","Toxic")[as.numeric(prob<0.5)+1],prob=prob,score=log2(prob/(1-prob)))
+
+PrOCTOR(SMILE="[H][C@@]12C[C@@H](C)[C@](O)(C(=O)CO)[C@@]1(C)C[C@H](O)[C@@]1(F)[C@@]2([H])CCC2=CC(=O)C=C[C@]12C",targets=c("NR3C1","NR0B1","ANXA1","NOS2"))
+
+write.csv(m,file="forest_input_to_py.csv")
+
+
+
+Now sort the drugs name according to alphabet order (filename: forest_input_to_py.csv)
+______________________________________________________________________________________________
+IN PYTHON:
+
+import pandas as pd
+file = pd.read_csv("./forest_input_to_py.csv")
+X = file.iloc[:,1:17]
+l = file.iloc[:,17:18]
+
+l = l.T
+y = []
+for i in range(0,len(X)):
+    y = y+[l[i][0]]
+
+from sklearn.model_selection import train_test_split
+
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.3) # 70% training and 30% test
+
+
+
+#Import Random Forest Model
+from sklearn.ensemble import RandomForestClassifier
+
+#Create a Gaussian Classifier
+clf=RandomForestClassifier(n_estimators=100)
+
+#Train the model using the training sets y_pred=clf.predict(X_test)
+clf.fit(X_train,y_train)
+
+y_pred=clf.predict(X_test)
+
+#Import scikit-learn metrics module for accuracy calculation
+from sklearn import metrics
+# Model Accuracy, how often is the classifier correct?
+print("Accuracy:",metrics.accuracy_score(y_test, y_pred))
