@@ -1,0 +1,58 @@
+<!doctype html>
+<head>
+  <title>Main Page</title>
+<link rel="stylesheet" href="{{ url_for('static', filename='multiselect.css') }}">
+  <script src="{{ url_for('static', filename='multiselect.min.js') }}"></script>
+</head>
+<body>
+
+
+
+  <h3> Please enter the values:</h3>
+  <form action="" method="post">
+    <div>
+      Drug: <input type="text" name="drug" placeholder="Enter the drug name in SMILE format" value = {%if drug%} {{drug}} {%else%} "" {%endif%} autocomplete="off">
+    </div>
+    <div>
+      <select placeholder="Begin typing a name to filter..." id ="testSelect1" name="targets" multiple>
+
+      {% for target in file["x"]%}
+        <option
+        {%if target in tar_string%}
+        selected
+        {%endif%}
+        >{{target}}</option>
+      {%endfor%}
+      </select>
+    </div>
+    <button type="submit">Submit</button>
+  </form>
+  {%if method=="POST"%}
+    {%if data.error == 1%}
+    <div>Please enter relevant drug name and its targets</div>
+    {%else%}
+    <table>
+      <tr><th>Features</th><th>Values</th></tr>
+      {% for key,value in data.features.items() %}
+        <tr><td>{{ key|e }}</td><td align="right">{{ value|e }}</td></tr>
+      {% endfor %}
+    </table>
+    <ul>
+      {%if data.prediction%}
+        <li>{{data.prediction | e}}</li>
+        <li>{{data.probability }}</li>
+        <li>{{data.score }}</li>
+      {%endif%}
+    <ul>
+    {%endif%}
+  {%endif%}
+  <script>
+  document.multiselect('#testSelect1')
+    .setCheckBoxClick("checkboxAll", function(target, args) {
+      console.log("Checkbox 'Select All' was clicked and got value ", args.checked);
+    })
+    .setCheckBoxClick("1", function(target, args) {
+      console.log("Checkbox for item with value '1' was clicked and got value ", args.checked);
+    });
+</script>
+</body>

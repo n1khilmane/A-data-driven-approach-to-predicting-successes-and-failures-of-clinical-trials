@@ -1,0 +1,22 @@
+installing:
+
+python3 -m venv venv
+. venv/bin/activate
+python -m pip install --upgrade pip
+pip install Flask
+
+
+
+running:
+
+export FLASK_APP=ui
+export FLASK_ENV=development
+flask run
+
+
+Main code resides in main.py which return results of features
+and the prediction
+
+front-end is in ui.py
+
+Javascript file and css file are residing in static folder
