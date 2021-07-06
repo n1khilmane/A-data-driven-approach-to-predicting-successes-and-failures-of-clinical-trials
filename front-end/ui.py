@@ -1,5 +1,5 @@
 from flask import Flask,render_template,request
-from main import execute
+from main import *
 import pandas as pd
 app = Flask(__name__)
 file = pd.read_csv("targetsList.csv")
@@ -14,6 +14,9 @@ def hello_world(name=None):
         drug = request.form.get("drug") 
         targets = request.form.getlist("targets")
         data = execute(drug,targets)
-        if drug == "": data["error"] = 1
+        if drug == "":
+            data["error"] = 1
+        if data["error"] != 1:
+            return render_template('index1.html',name=name,data = data,drug = drug,tar_string = targets,method = method,file = file)+s
         method = "POST"
     return render_template('index.html', name=name,data = data,drug = drug,tar_string = targets,method = method,file = file)+s

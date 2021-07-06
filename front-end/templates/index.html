@@ -3,18 +3,81 @@
   <title>Main Page</title>
 <link rel="stylesheet" href="{{ url_for('static', filename='multiselect.css') }}">
   <script src="{{ url_for('static', filename='multiselect.min.js') }}"></script>
+  <style>
+    html { 
+      background: url('../static/images/drug_photo1.jpg') no-repeat center center fixed; 
+      -webkit-background-size: cover;
+      -moz-background-size: cover;
+      -o-background-size: cover;
+      background-size: cover;
+    }
+    body{
+      margin: 0;
+    }
+    
+    h1{
+      background-color:rgba(0,0,0,0.3);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 6rem;
+      font-size: 4rem;
+      color: orange;
+    }
+    h3{
+      color: yellow;
+      font-size: 2rem;
+    }
+    .drug{
+      color:yellow;
+      font-size: 1.5rem;
+    }
+    #ip{
+      height: 1.4rem;
+      font-size: 1.2rem;
+      padding: 0.25rem;
+      width: 14.5rem;
+    }
+    #testSelect1{
+      height: 1.8rem;
+      font-size: 1.2rem;
+      padding: 0.25rem;
+      width: 7rem;
+    }
+    #bt1{
+      margin-left: 10rem;
+      font-size: 1.2rem;
+      cursor: pointer;
+    }
+    #bt1:hover{
+      color:#000000;
+      background-color:#1879d3;
+      border-color: rgba(255,255,255,1);
+  }
+  .wrong-res{
+    color: gold;
+      font-size: 1.5rem;
+  }
+  .result{
+    color: yellow;
+    font-size: 1.5rem;
+  }
+  </style>
 </head>
 <body>
+<h1>Drug Discovery</h1>
 
 
-
-  <h3> Please enter the values:</h3>
+  <h3> Please enter Drug Name and it's Target :</h3>
   <form action="" method="post">
-    <div>
-      Drug: <input type="text" name="drug" placeholder="Enter the drug name in SMILE format" value = {%if drug%} {{drug}} {%else%} "" {%endif%} autocomplete="off">
+    <div class="drug">
+      Drug : &nbsp &nbsp<input id="ip" type="text" name="drug" placeholder="Enter the drug name" value = {%if drug%} {{drug}} {%else%} "" {%endif%} autocomplete="off">
     </div>
+    <br/>
+    <br/>
     <div>
-      <select placeholder="Begin typing a name to filter..." id ="testSelect1" name="targets" multiple>
+      <label class="drug">
+      Targets :</label> <select placeholder="Begin typing a name to filter..." id ="testSelect1" name="targets" multiple>
 
       {% for target in file["x"]%}
         <option
@@ -25,19 +88,21 @@
       {%endfor%}
       </select>
     </div>
-    <button type="submit">Submit</button>
+    <br/>
+    <br/>
+    <button id="bt1" type="submit">Submit</button>
   </form>
   {%if method=="POST"%}
     {%if data.error == 1%}
-    <div>Please enter relevant drug name and its targets</div>
+    <div class="wrong-res">Please enter relevant drug name and its targets</div>
     {%else%}
-    <table>
+    <table class="result">
       <tr><th>Features</th><th>Values</th></tr>
       {% for key,value in data.features.items() %}
         <tr><td>{{ key|e }}</td><td align="right">{{ value|e }}</td></tr>
       {% endfor %}
     </table>
-    <ul>
+    <ul class="result">
       {%if data.prediction%}
         <li>{{data.prediction | e}}</li>
         <li>{{data.probability }}</li>
@@ -46,6 +111,8 @@
     <ul>
     {%endif%}
   {%endif%}
+</ul>
+</ul>
   <script>
   document.multiselect('#testSelect1')
     .setCheckBoxClick("checkboxAll", function(target, args) {
