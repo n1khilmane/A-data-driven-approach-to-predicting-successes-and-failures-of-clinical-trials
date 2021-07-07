@@ -1,0 +1,158 @@
+<!doctype html>
+<head>
+  <title>Main Page</title>
+<link rel="stylesheet" href="{{ url_for('static', filename='multiselect.css') }}">
+  <script src="{{ url_for('static', filename='multiselect.min.js') }}"></script>
+  <style>
+    html{
+      font-size: 10px; 
+      background: no-repeat center center fixed; 
+      background-image:url('static/images/drug_photo1.jpg');
+      -webkit-background-size: cover;
+      -moz-background-size: cover;
+      -o-background-size: cover;
+      background-size: cover;
+    }
+    body{
+      margin: 0;
+    }
+    
+    h1{
+      background-color:rgba(0,0,0,0.3);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 6rem;
+      font-size: 4rem;
+      color: orange;
+    }
+    h3{
+      color: yellow;
+      font-size: 2rem;
+    }
+    .drug{
+      color:yellow;
+      font-size: 1.5rem;
+    }
+    #ip{
+      height: 1.6rem;
+      font-size: 1.2rem;
+      padding: 0.25rem;
+      width: 23rem;
+    }
+    #testSelect1{
+      height: 2.3rem;
+      font-size: 1.2rem;
+      padding: 0.25rem;
+      width: 24rem;
+    }
+    #bt1{
+      margin-left: 10rem;
+      font-size: 1.2rem;
+      cursor: pointer;
+    }
+    #bt1:hover{
+      color:#000000;
+      background-color:#1879d3;
+      border-color: rgba(255,255,255,1);
+  }
+  .wrong-res{
+    color: green;
+    font-size: 1.5rem;
+    background-color: rgba(0, 0, 0, 0.8);
+    margin-top: 1rem;
+
+  }
+  .result{
+    color: gold;
+    background-color: rgba(0, 0, 0, 0.9);
+    font-size: 1.5rem;
+    margin: 1rem;
+    display: inline-block;
+    float: left;
+  }
+  .result2{
+    color: gold;
+    background-color: rgba(0, 0, 0, 0.8);
+    font-size: 1.5rem;
+    margin: 1rem;
+    display: block;
+
+  }
+  form{
+    margin: 2rem;
+    display: inline-block;
+  }
+  #link{
+    color: gold;
+    background-color: rgba(0, 0, 0, 0.8);
+    font-size: 1rem;
+    margin-top: 2rem;
+  }
+  .free{
+    display: inline-block;
+    float: left;
+  }
+  </style>
+</head>
+<body>
+<h1>Drug Discovery</h1>
+
+
+  <h3> Please enter Drug Name and it's Target :</h3>
+   <div class="free">
+  <form action="" method="post">
+    <div class="drug">
+      Drug : &nbsp &nbsp<input id="ip" type="text" name="drug" placeholder="Enter the drug name" value = {%if drug%} {{drug}} {%else%} "" {%endif%} autocomplete="off">
+    </div>
+    <br/>
+    <br/>
+    <div>
+      <label class="drug">
+      Targets :</label> <select placeholder="Begin typing a name to filter..." id ="testSelect1" name="targets" multiple>
+
+      {% for target in file["x"]%}
+        <option
+        {%if target in targets%}
+        selected
+        {%endif%}
+        >{{target}}</option>
+      {%endfor%}
+      </select>
+    </div>
+    <br/>
+    <br/>
+    <button id="bt1" type="submit">Submit</button>
+  <div id = "link"><a href="/">Please click here</a> to input the drug in form of drug name</div>
+  </form>
+  {%if method=="POST"%}
+    {%if data.error == 1%}
+    <div class="wrong-res">Please enter relevant drug name and its targets</div>
+    {%else%}
+    <ul class="result2">
+      {%if data.prediction%}
+        <li>{{data.prediction | e}}</li>
+        <li>{{data.probability }}</li>
+        <li>{{data.score }}</li>
+      {%endif%}
+    </ul>
+  </div>
+    <table class="result">
+      <tr><th>Features</th><th>Values</th></tr>
+      {% for key,value in data.features.items() %}
+        <tr><td>{{ key|e }}</td><td align="right">{{ value|e }}</td></tr>
+      {% endfor %}
+    </table>
+    
+    {%endif%}
+  {%endif%}
+  <script>
+  document.multiselect('#testSelect1')
+    .setCheckBoxClick("checkboxAll", function(target, args) {
+      console.log("Checkbox 'Select All' was clicked and got value ", args.checked);
+    })
+    .setCheckBoxClick("1", function(target, args) {
+      console.log("Checkbox for item with value '1' was clicked and got value ", args.checked);
+    });
+</script>
+</body>

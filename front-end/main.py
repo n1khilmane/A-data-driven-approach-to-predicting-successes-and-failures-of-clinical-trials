@@ -43,7 +43,7 @@ def proctor(SMILE,targets,type="full"):
 	clf = createRandomForest("./forest_input_to_py.csv")
 	prob = clf.predict_proba(df)[0][1]
 	pred = ("Safe","Toxic")[int(prob<0.5)]
-	d = { "features": featureset,"prediction": "\nPrediction:\t"+str(pred),"probability" : "\nProbability:\t"+str(prob),"score":  "\nProctor Score:\t"+str(math.log2(prob/(1-prob)))}
+	d = { "features": featureset,"prediction": "\nPrediction:\t"+str(pred),"probability" : "\nProbability:\t"+str(prob),"score":  "\nProctor Score:\t"+str(round(math.log2(prob/(1-prob)),7))}
 	return d
 
 def get_PC_value(self,targets):

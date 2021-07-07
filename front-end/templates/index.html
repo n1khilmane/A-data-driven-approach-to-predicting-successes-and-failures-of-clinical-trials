@@ -4,8 +4,10 @@
 <link rel="stylesheet" href="{{ url_for('static', filename='multiselect.css') }}">
   <script src="{{ url_for('static', filename='multiselect.min.js') }}"></script>
   <style>
-    html { 
-      background: url('../static/images/drug_photo1.jpg') no-repeat center center fixed; 
+    html{
+      font-size: 10px;
+      background: no-repeat center center fixed; 
+      background-image:url('static/images/drug_photo1.jpg');
       -webkit-background-size: cover;
       -moz-background-size: cover;
       -o-background-size: cover;
@@ -31,18 +33,19 @@
     .drug{
       color:yellow;
       font-size: 1.5rem;
+      margin-right: 2rem;
     }
     #ip{
-      height: 1.4rem;
+      height: 2.6rem;
       font-size: 1.2rem;
       padding: 0.25rem;
-      width: 14.5rem;
+      width: 23.5rem;
     }
     #testSelect1{
-      height: 1.8rem;
+      height: 2.3rem;
       font-size: 1.2rem;
       padding: 0.25rem;
-      width: 7rem;
+      width: 24rem;
     }
     #bt1{
       margin-left: 10rem;
@@ -56,11 +59,46 @@
   }
   .wrong-res{
     color: gold;
-      font-size: 1.5rem;
+    font-size: 1.5rem;
+    background-color: rgba(0, 0, 0, 0.8);
+    margin-top: 1rem;
+
   }
   .result{
-    color: yellow;
+    color: gold;
+    background-color: rgba(0, 0, 0, 0.9);
     font-size: 1.5rem;
+    margin: 1rem;
+    display: inline-block;
+    float: left;
+  }
+  .result2{
+    color: gold;
+    background-color: rgba(0, 0, 0, 0.8);
+    font-size: 1.5rem;
+    margin: 1rem;
+    display: block;
+
+  }
+  form{
+    margin: 2rem;
+    display: inline-block;
+  }
+  form div:first-child{
+    margin-bottom: 1rem;
+  }
+  /*form div:first-child select option:first-child {
+    color: blue;
+  }*/
+  #link{
+    color: gold;
+    background-color: rgba(0, 0, 0, 0.8);
+    font-size: 1rem;
+    margin-top: 2rem;
+  }
+  .free{
+    display: inline-block;
+    float: left;
   }
   </style>
 </head>
@@ -69,19 +107,28 @@
 
 
   <h3> Please enter Drug Name and it's Target :</h3>
+  <div class="free">
   <form action="" method="post">
-    <div class="drug">
-      Drug : &nbsp &nbsp<input id="ip" type="text" name="drug" placeholder="Enter the drug name" value = {%if drug%} {{drug}} {%else%} "" {%endif%} autocomplete="off">
-    </div>
-    <br/>
-    <br/>
     <div>
-      <label class="drug">
-      Targets :</label> <select placeholder="Begin typing a name to filter..." id ="testSelect1" name="targets" multiple>
+      <span class="drug">
+      Drug : &nbsp &nbsp</span> <select placeholder="Begin typing a name to filter..." id = "ip" name="drug">
+        <option value = "">Select a drug</option>
+      {% for drugName in drugList["Name"]%}
+        <option
+        {%if drugName == drug%}
+        selected
+        {%endif%}
+        >{{drugName}}</option>
+      {%endfor%}
+      </select>
+    </div>
+    <div>
+      <span class="drug">
+      Targets :</span> <select placeholder="Begin typing a name to filter..." id ="testSelect1" name="targets" multiple>
 
       {% for target in file["x"]%}
         <option
-        {%if target in tar_string%}
+        {%if target in targets%}
         selected
         {%endif%}
         >{{target}}</option>
@@ -91,28 +138,28 @@
     <br/>
     <br/>
     <button id="bt1" type="submit">Submit</button>
+  <div id = "link"><a href="smiles">Please click here</a> to input the drug in form of SMILES</div>
   </form>
   {%if method=="POST"%}
     {%if data.error == 1%}
     <div class="wrong-res">Please enter relevant drug name and its targets</div>
     {%else%}
+    <ul class="result2">
+      {%if data.prediction%}
+        <li>{{data.prediction | e}}</li>
+        <li>{{data.probability }}</li>
+        <li>{{data.score }}</li>
+      {%endif%}
+    </ul>
+  </div>
     <table class="result">
       <tr><th>Features</th><th>Values</th></tr>
       {% for key,value in data.features.items() %}
         <tr><td>{{ key|e }}</td><td align="right">{{ value|e }}</td></tr>
       {% endfor %}
     </table>
-    <ul class="result">
-      {%if data.prediction%}
-        <li>{{data.prediction | e}}</li>
-        <li>{{data.probability }}</li>
-        <li>{{data.score }}</li>
-      {%endif%}
-    <ul>
-    {%endif%}
+        {%endif%}
   {%endif%}
-</ul>
-</ul>
   <script>
   document.multiselect('#testSelect1')
     .setCheckBoxClick("checkboxAll", function(target, args) {
