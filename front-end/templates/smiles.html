@@ -30,6 +30,9 @@
       color: yellow;
       font-size: 2rem;
     }
+    a:hover{
+      color: white;
+    }
     .drug{
       color:yellow;
       font-size: 1.5rem;
@@ -57,11 +60,12 @@
       border-color: rgba(255,255,255,1);
   }
   .wrong-res{
-    color: green;
-    font-size: 1.5rem;
+    color: red;
+    font-size: 1.8rem;
     background-color: rgba(0, 0, 0, 0.8);
     margin-top: 1rem;
-
+    width: 34rem;
+    margin-left: 2rem;
   }
   .result{
     color: gold;
@@ -86,7 +90,7 @@
   #link{
     color: gold;
     background-color: rgba(0, 0, 0, 0.8);
-    font-size: 1rem;
+    font-size: 1.5rem;
     margin-top: 2rem;
   }
   .free{
@@ -103,7 +107,7 @@
    <div class="free">
   <form action="" method="post">
     <div class="drug">
-      Drug : &nbsp &nbsp<input id="ip" type="text" name="drug" placeholder="Enter the drug name" value = {%if drug%} {{drug}} {%else%} "" {%endif%} autocomplete="off">
+      Drug : &nbsp &nbsp<input id="ip" type="text" name="drug" placeholder="Enter the SMILE form" value = {%if drug%} {{drug}} {%else%} "" {%endif%} autocomplete="off">
     </div>
     <br/>
     <br/>
